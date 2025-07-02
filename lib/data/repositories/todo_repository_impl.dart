@@ -1,3 +1,4 @@
+import 'package:flutter_todo_bloc/data/database/todo_entity.dart';
 import 'package:flutter_todo_bloc/data/datasources/todo_local_datasource.dart';
 import 'package:flutter_todo_bloc/data/models/todo_model.dart';
 import 'package:flutter_todo_bloc/domain/entities/todo.dart';
@@ -32,18 +33,21 @@ class TodoRepositoryImpl implements TodoRepository {
 
   @override
   Future<void> deleteTodo(String id) async {
-    final entity = await _localDataSource.getTodoById(int.tryParse(id) ?? -1);
+    final parsedId = int.tryParse(id);
+    if (parsedId == null) throw ArgumentError('Invalid ID: $id');
+
+    final entity = await _localDataSource.getTodoById(parsedId);
     if (entity != null) {
       await _localDataSource.deleteTodo(entity);
     }
   }
 
   // Helper: Map data entity to domain entity
-  Todo _toDomain(dynamic entity) => Todo(
+  Todo _toDomain(TodoEntity entity) => Todo(
       id: entity.id?.toString() ?? '',
       title: entity.title,
-      description: '', // No description in data layer, set as empty or extend model
       isCompleted: entity.isDone,
+      createdAt: entity.createdAt,
     );
 
   // Helper: Map domain entity to data model
@@ -51,6 +55,6 @@ class TodoRepositoryImpl implements TodoRepository {
       id: int.tryParse(todo.id),
       title: todo.title,
       isDone: todo.isCompleted,
-      createdAt: '', // No createdAt in domain, set as empty or extend domain
+      createdAt: todo.createdAt,
     );
 }
