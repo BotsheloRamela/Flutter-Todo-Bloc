@@ -9,13 +9,13 @@ Future<List<SingleChildWidget>> setupDependencies() async {
 
   return [
     Provider<AppDatabase>.value(value: database),
+
     Provider<TodoLocalDataSource>(
       create: (_) => TodoLocalDataSource(database),
     ),
-    Provider<TodoRepositoryImpl>(
-      create: (context) => TodoRepositoryImpl(
-        Provider.of<TodoLocalDataSource>(context, listen: false),
-      ),
+
+    ProxyProvider<TodoLocalDataSource, TodoRepositoryImpl>(
+      update: (_, todoLocalDataSource, __) => TodoRepositoryImpl(todoLocalDataSource)
     ),
 
     // TODO: Add providers for use cases, view models, etc. -> Bloc

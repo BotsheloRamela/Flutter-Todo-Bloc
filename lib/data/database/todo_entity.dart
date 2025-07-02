@@ -1,7 +1,7 @@
 
-import 'package:floor/floor.dart' show entity, primaryKey, ColumnInfo;
+import 'package:floor/floor.dart' show Entity, primaryKey, ColumnInfo;
 
-@entity
+@Entity(tableName: 'todos')
 class TodoEntity {
   TodoEntity({
     required this.title, required this.isDone, required this.createdAt, this.id,
