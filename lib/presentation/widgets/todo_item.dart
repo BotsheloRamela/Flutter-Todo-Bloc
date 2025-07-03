@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_todo_bloc/core/date_time_utils.dart';
 import 'package:flutter_todo_bloc/domain/entities/todo.dart';
 import 'package:flutter_todo_bloc/presentation/bloc/todo_bloc.dart';
 import 'package:flutter_todo_bloc/presentation/bloc/todo_event.dart';
@@ -18,9 +19,10 @@ class TodoItem extends StatelessWidget {
         style: TextStyle(
           decoration: todo.isCompleted ? TextDecoration.lineThrough : null,
           color: todo.isCompleted ? Colors.grey : Colors.black,
+          fontWeight: todo.isCompleted ? FontWeight.w400 : FontWeight.w600,
         ),
       ),
-      subtitle: Text('Created at: ${todo.createdAt}'),
+      subtitle: Text(DateTimeUtils.formatUtcTimestampToDate(todo.createdAt) ?? ''),
       trailing: Checkbox(
         value: todo.isCompleted,
         onChanged: (value) {

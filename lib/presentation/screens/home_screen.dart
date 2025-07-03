@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_todo_bloc/core/date_time_utils.dart';
 import 'package:flutter_todo_bloc/domain/entities/todo.dart';
 import 'package:flutter_todo_bloc/presentation/bloc/todo_bloc.dart';
 import 'package:flutter_todo_bloc/presentation/bloc/todo_event.dart';
@@ -41,7 +42,10 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           todoDialog(context: context, onSave: (String title) {
-            context.read<TodoBloc>().add(TodoAdded(Todo(title: title, createdAt: DateTime.now().toString())));
+            context.read<TodoBloc>().add(TodoAdded(Todo(
+                title: title,
+                createdAt: DateTimeUtils.getCurrentUtcTimestamp()
+            )));
           });
         },
         child: const Icon(Icons.add),
