@@ -280,7 +280,7 @@ void main() {
         act: (bloc) => bloc
           ..add(TodoStarted())
           ..add(const TodoFilterChanged(TodoFilter.completed))
-          ..add(const TodoAdded(Todo(id: 3, title: 'New Todo', createdAt: ''))),
+          ..add(const TodoAdded(Todo(id: 3, title: 'New Todo', createdAt: '2025-07-01T12:00:00Z'))),
         expect: () => [
           TodoState(status: TodoStatus.loading),
           TodoState(todos: sampleTodos, status: TodoStatus.success),
