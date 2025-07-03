@@ -65,6 +65,12 @@ class _HomeScreenState extends State<HomeScreen> {
             return const Center(child: CircularProgressIndicator());
           }
 
+          if (state.status == TodoStatus.error) {
+            return Center(
+              child: Text(state.errorMessage ?? 'An error occurred'),
+            );
+          }
+
           final todos = state.filteredTodos;
 
           if (todos.isEmpty) {
