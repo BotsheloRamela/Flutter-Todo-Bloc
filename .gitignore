@@ -47,3 +47,6 @@ app.*.map.json
 # Floor generated files
 **/*.g.dart
 **/*.database.dart
+
+# mockito generated files
+**/*.mocks.dart
