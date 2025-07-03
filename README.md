@@ -19,7 +19,7 @@ Everything works offline and your data stays on your device.
 * ✅ Data persists between app restarts
 
 ## How to run
-* Make sure you have Flutter installed
+* Make sure you have Flutter installed (channel stable, version `3.32.5`, or later)
 * Clone this repo
 * Run `flutter pub get` to install dependencies
 * Run `flutter packages pub run build_runner build` to generate Floor database files
@@ -58,10 +58,10 @@ The app follows Clean Architecture principles with three main layers:
 
 ## Database
 Uses Floor (SQLite) to store todos locally. Each todo has:
-* id - unique identifier
-* title - what you need to do
-* isDone - whether it's completed
-* createdAt - when you added it
+* `id` - unique identifier
+* `title` - what you need to do
+* `isCompleted` - whether it's completed
+* `createdAt` - when you added it
 
 ## Development notes
 This was built as a learning project to explore BLoC and Floor. Coming from Riverpod and Hive, the transition 
