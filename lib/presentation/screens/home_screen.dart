@@ -17,6 +17,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<TodoBloc>().add(TodoStarted());
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
