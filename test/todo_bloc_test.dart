@@ -195,5 +195,79 @@ void main() {
         ],
       );
     });
+
+    group('TodoCompletionToggled', () {
+      final todoToToggle = sampleTodos[0].copyWith(isCompleted: !sampleTodos[0].isCompleted);
+
+      blocTest<TodoBloc, TodoState>(
+        'emits [loading, success] when toggled succeeds',
+        build: () {
+          when(mockGetTodoById(any)).thenAnswer((_) async => todoToToggle);
+          when(mockUpdateTodo(any)).thenAnswer((_) async => {});
+          when(mockGetAllTodos()).thenAnswer((_) async => sampleTodos);
+          return todoBloc;
+        },
+        act: (bloc) => bloc.add(const TodoCompletionToggled(1)),
+        expect: () => [
+          TodoState(status: TodoStatus.loading),
+          TodoState(todos: sampleTodos, status: TodoStatus.success),
+        ],
+      );
+
+      blocTest<TodoBloc, TodoState>(
+        'emits [loading, success] when todo is not found',
+        build: () {
+          when(mockGetTodoById(any)).thenAnswer((_) async => null);
+          when(mockGetAllTodos()).thenAnswer((_) async => sampleTodos);
+          return todoBloc;
+        },
+        act: (bloc) => bloc.add(const TodoCompletionToggled(50)),
+        expect: () => [
+          TodoState(status: TodoStatus.loading),
+          TodoState(
+            todos: sampleTodos,
+            status: TodoStatus.success,
+          ),
+        ],
+      );
+
+      blocTest<TodoBloc, TodoState>(
+        'emits [loading, error] when toggling fails',
+        build: () {
+          when(mockGetTodoById(any)).thenThrow(Exception('Failed to toggle todo'));
+          return todoBloc;
+        },
+        act: (bloc) => bloc.add(const TodoCompletionToggled(1)),
+        expect: () => [
+          TodoState(status: TodoStatus.loading),
+          TodoState(
+            status: TodoStatus.error,
+            errorMessage: 'Exception: Failed to toggle todo',
+          ),
+        ],
+      );
+    });
+
+    group('TodoFilterChanged', () {
+      blocTest<TodoBloc, TodoState>(
+        'emits new filter state with updated filter',
+        build: () => todoBloc,
+        act: (bloc) => bloc.add(const TodoFilterChanged(TodoFilter.completed)),
+        expect: () => [
+          TodoState(filter: TodoFilter.completed),
+        ],
+      );
+
+      blocTest<TodoBloc, TodoState>(
+        'emits new filter state with active filter',
+        build: () => todoBloc,
+        act: (bloc) => bloc.add(const TodoFilterChanged(TodoFilter.active)),
+        expect: () => [
+          TodoState(filter: TodoFilter.active),
+        ],
+      );
+
+      // NOTE: all filter redundant as it is the default state
+    });
   });
 }
