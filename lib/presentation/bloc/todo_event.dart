@@ -34,7 +34,7 @@ class TodoUpdated extends TodoEvent {
 class TodoDeleted extends TodoEvent {
   const TodoDeleted(this.todoId);
 
-  final String todoId;
+  final int todoId;
 
   @override
   List<Object?> get props => [todoId];
@@ -43,7 +43,7 @@ class TodoDeleted extends TodoEvent {
 class TodoCompletionToggled extends TodoEvent {
   const TodoCompletionToggled(this.todoId);
 
-  final String todoId;
+  final int todoId;
 
   @override
   List<Object?> get props => [todoId];

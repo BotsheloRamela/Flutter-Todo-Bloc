@@ -56,15 +56,17 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   }
 
   void _onTodoToggled(TodoCompletionToggled event, Emitter<TodoState> emit) async {
-    await _performActionWithReload(emit, () async {
+    emit(state.copyWith(status: TodoStatus.loading));
+    try {
       final todo = await getTodoById(event.todoId);
       if (todo != null) {
         await updateTodo(todo.copyWith(isCompleted: !todo.isCompleted));
-      } else {
-        throw Exception('Todo not found');
+        final todos = await getAllTodos();
+        emit(state.copyWith(todos: todos, status: TodoStatus.success));
       }
-      return getAllTodos();
-    });
+    } catch (e) {
+      emit(state.copyWith(status: TodoStatus.error));
+    }
   }
 
   Future<void> _performActionWithReload(

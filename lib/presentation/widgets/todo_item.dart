@@ -1,6 +1,9 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_todo_bloc/domain/entities/todo.dart';
+import 'package:flutter_todo_bloc/presentation/bloc/todo_bloc.dart';
+import 'package:flutter_todo_bloc/presentation/bloc/todo_event.dart';
 
 class TodoItem extends StatelessWidget {
   const TodoItem({required this.todo, super.key});
@@ -16,10 +19,12 @@ class TodoItem extends StatelessWidget {
       trailing: Checkbox(
         value: todo.isCompleted,
         onChanged: (value) {
-          // Handle checkbox state change
-          // This could be a callback to update the todo item
+          context.read<TodoBloc>().add(TodoCompletionToggled(todo.id!));
         },
       ),
+      onLongPress: () {
+        context.read<TodoBloc>().add(TodoDeleted(todo.id!));
+      },
     );
   }
 }

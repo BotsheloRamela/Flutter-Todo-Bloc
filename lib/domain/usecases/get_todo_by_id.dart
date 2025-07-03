@@ -5,7 +5,5 @@ class GetTodoById {
   GetTodoById(this.repository);
   final TodoRepository repository;
 
-  Future<Todo?> call(String id) async {
-    return await repository.getTodoById(id);
-  }
+  Future<Todo?> call(int id) async => repository.getTodoById(id);
 }

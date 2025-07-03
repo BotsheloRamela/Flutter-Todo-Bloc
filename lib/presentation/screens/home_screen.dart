@@ -1,8 +1,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_todo_bloc/domain/entities/todo.dart';
 import 'package:flutter_todo_bloc/presentation/bloc/todo_bloc.dart';
+import 'package:flutter_todo_bloc/presentation/bloc/todo_event.dart';
 import 'package:flutter_todo_bloc/presentation/bloc/todo_state.dart';
+import 'package:flutter_todo_bloc/presentation/widgets/todo_dialog.dart';
 import 'package:flutter_todo_bloc/presentation/widgets/todo_item.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -37,7 +40,9 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigate to add todo page
+          todoDialog(context: context, onSave: (String title) {
+            context.read<TodoBloc>().add(TodoAdded(Todo(title: title, createdAt: DateTime.now().toString())));
+          });
         },
         child: const Icon(Icons.add),
       ),
