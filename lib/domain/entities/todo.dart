@@ -3,9 +3,9 @@ import 'package:equatable/equatable.dart';
 class Todo extends Equatable {
 
   const Todo({
-    this.id,
     required this.title,
     required this.createdAt,
+    this.id,
     this.isCompleted = false,
   });
 

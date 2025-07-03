@@ -8,25 +8,42 @@ enum TodoStatus {
   error,
 }
 
+enum TodoFilter { all, active, completed }
+
 class TodoState {
 
   TodoState({
     this.todos = const <Todo>[],
     this.status = TodoStatus.initial,
+    this.filter = TodoFilter.all,
     this.errorMessage,
   });
 
   final List<Todo> todos;
   final TodoStatus status;
+  final TodoFilter filter;
   final String? errorMessage;
+
+  List<Todo> get filteredTodos {
+    switch (filter) {
+      case TodoFilter.active:
+        return todos.where((todo) => !todo.isCompleted).toList();
+      case TodoFilter.completed:
+        return todos.where((todo) => todo.isCompleted).toList();
+      case TodoFilter.all:
+      return todos;
+    }
+  }
 
   TodoState copyWith({
     List<Todo>? todos,
     TodoStatus? status,
+    TodoFilter? filter,
     String? errorMessage
   }) => TodoState(
       todos: todos ?? this.todos,
       status: status ?? this.status,
+      filter: filter ?? this.filter,
       errorMessage: errorMessage ?? this.errorMessage,
     );
 }
