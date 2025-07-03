@@ -95,5 +95,105 @@ void main() {
         ],
       );
     });
+
+    group('TodoAdded', () {
+      const newTodo = Todo(title: 'New Todo', createdAt: '2025-07-04T12:00:00Z');
+
+      blocTest<TodoBloc, TodoState>(
+        'emits [loading, success] when createTodo succeeds',
+        build: () {
+          when(mockCreateTodo(newTodo)).thenAnswer((_) async => {});
+          when(mockGetAllTodos()).thenAnswer((_) async => [...sampleTodos, newTodo]);
+          return todoBloc;
+        },
+        act: (bloc) => bloc.add(const TodoAdded(newTodo)),
+        expect: () => [
+          TodoState(status: TodoStatus.loading),
+          TodoState(todos: [...sampleTodos, newTodo], status: TodoStatus.success),
+        ],
+      );
+
+      blocTest<TodoBloc, TodoState>(
+        'emits [loading, error] when createTodo fails',
+        build: () {
+          when(mockCreateTodo(newTodo)).thenThrow(Exception('Failed to create todo'));
+          return todoBloc;
+        },
+        act: (bloc) => bloc.add(const TodoAdded(newTodo)),
+        expect: () => [
+          TodoState(status: TodoStatus.loading),
+          TodoState(
+            status: TodoStatus.error,
+            errorMessage: 'Exception: Failed to create todo',
+          ),
+        ],
+      );
+    });
+
+    group('TodoUpdated', () {
+      const updatedTodo = Todo(id: 1, title: 'Test Todo', createdAt: '2025-07-01T12:00:00Z');
+
+      blocTest<TodoBloc, TodoState>(
+        'emits [loading, success] when updateTodo succeeds',
+        build: () {
+          when(mockUpdateTodo(updatedTodo)).thenAnswer((_) async => {});
+          when(mockGetAllTodos()).thenAnswer((_) async => sampleTodos);
+          return todoBloc;
+        },
+        act: (bloc) => bloc.add(const TodoUpdated(updatedTodo)),
+        expect: () => [
+          TodoState(status: TodoStatus.loading),
+          TodoState(todos: sampleTodos, status: TodoStatus.success),
+        ],
+      );
+
+      blocTest<TodoBloc, TodoState>(
+        'emits [loading, error] when updateTodo fails',
+        build: () {
+          when(mockUpdateTodo(updatedTodo)).thenThrow(Exception('Failed to update todo'));
+          return todoBloc;
+        },
+        act: (bloc) => bloc.add(const TodoUpdated(updatedTodo)),
+        expect: () => [
+          TodoState(status: TodoStatus.loading),
+          TodoState(
+            status: TodoStatus.error,
+            errorMessage: 'Exception: Failed to update todo',
+          ),
+        ],
+      );
+    });
+
+    group('TodoDeleted', () {
+      blocTest<TodoBloc, TodoState>(
+        'emits [loading, success] when deleteTodo succeeds',
+        build: () {
+          when(mockDeleteTodo(any)).thenAnswer((_) async => {});
+          when(mockGetAllTodos()).thenAnswer((_) async => sampleTodos);
+          return todoBloc;
+        },
+        act: (bloc) => bloc.add(const TodoDeleted(1)),
+        expect: () => [
+          TodoState(status: TodoStatus.loading),
+          TodoState(todos: sampleTodos, status: TodoStatus.success),
+        ],
+      );
+
+      blocTest<TodoBloc, TodoState>(
+        'emits [loading, error] when deleteTodo fails',
+        build: () {
+          when(mockDeleteTodo(any)).thenThrow(Exception('Failed to delete todo'));
+          return todoBloc;
+        },
+        act: (bloc) => bloc.add(const TodoDeleted(1)),
+        expect: () => [
+          TodoState(status: TodoStatus.loading),
+          TodoState(
+            status: TodoStatus.error,
+            errorMessage: 'Exception: Failed to delete todo',
+          ),
+        ],
+      );
+    });
   });
 }
