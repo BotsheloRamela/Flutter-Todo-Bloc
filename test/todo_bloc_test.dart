@@ -36,7 +36,6 @@ void main() {
     final sampleTodos = [
       const Todo(id: 1, title: 'Test Todo 1', createdAt: '2025-07-01T12:00:00Z'),
       const Todo(id: 2, title: 'Test Todo 2', isCompleted: true, createdAt: '2025-07-02T12:00:00Z'),
-      const Todo(title: 'Test Todo 3', createdAt: '2025-07-03T12:00:00Z'),
     ];
 
     setUp(() {
@@ -268,6 +267,61 @@ void main() {
       );
 
       // NOTE: all filter redundant as it is the default state
+    });
+
+    group('Multiple events', () {
+      blocTest<TodoBloc, TodoState>(
+        'handles multiple events in sequence',
+        build: () {
+          when(mockGetAllTodos()).thenAnswer((_) async => sampleTodos);
+          when(mockCreateTodo(any)).thenAnswer((_) async => {});
+          return todoBloc;
+        },
+        act: (bloc) => bloc
+          ..add(TodoStarted())
+          ..add(const TodoFilterChanged(TodoFilter.completed))
+          ..add(const TodoAdded(Todo(id: 3, title: 'New Todo', createdAt: ''))),
+        expect: () => [
+          TodoState(status: TodoStatus.loading),
+          TodoState(todos: sampleTodos, status: TodoStatus.success),
+          TodoState(
+            todos: sampleTodos,
+            status: TodoStatus.success,
+            filter: TodoFilter.completed,
+          ),
+          TodoState(
+            todos: sampleTodos,
+            status: TodoStatus.loading,
+            filter: TodoFilter.completed,
+          ),
+          TodoState(
+            todos: sampleTodos,
+            status: TodoStatus.success,
+            filter: TodoFilter.completed,
+          ),
+        ]
+      );
+    });
+
+    group('Verify interactions', () {
+      test('verifies correct use case methods are called', () async {
+        const testTodo = Todo(id: 1, title: 'Test Todo', createdAt: '2025-07-01T12:00:00Z');
+
+        // This will trigger the initial load of todos
+        when(mockGetAllTodos()).thenAnswer((_) async => sampleTodos);
+        when(mockCreateTodo(any)).thenAnswer((_) async => {});
+
+        // Start the bloc
+        todoBloc.add(TodoStarted());
+        await untilCalled(mockGetAllTodos());
+
+        todoBloc.add(const TodoAdded(testTodo));
+        await untilCalled(mockCreateTodo(any));
+
+        // Verify that the methods were called correctly
+        verify(mockGetAllTodos()).called(1); // should be called on start
+        verify(mockCreateTodo(testTodo)).called(1);
+      });
     });
   });
 }
