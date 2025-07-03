@@ -80,6 +80,8 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         await updateTodo(todo.copyWith(isCompleted: !todo.isCompleted));
         final todos = await getAllTodos();
         emit(state.copyWith(todos: todos, status: TodoStatus.success));
+      } else {
+        emit(state.copyWith(status: TodoStatus.error, errorMessage: 'Todo not found'));
       }
     } catch (e) {
       emit(state.copyWith(status: TodoStatus.error));
