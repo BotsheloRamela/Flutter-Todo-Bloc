@@ -28,18 +28,44 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
         title: const Text('My Todos'),
+        actions: [
+          PopupMenuButton<TodoFilter>(
+            onSelected: (filter) {
+              context.read<TodoBloc>().add(TodoFilterChanged(filter));
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: TodoFilter.all,
+                child: Text('All'),
+              ),
+              const PopupMenuItem(
+                value: TodoFilter.active,
+                child: Text('Active'),
+              ),
+              const PopupMenuItem(
+                value: TodoFilter.completed,
+                child: Text('Completed'),
+              ),
+            ],
+            icon: const Icon(Icons.filter_list, size: 28.0),
+          )
+        ],
       ),
       body: BlocBuilder<TodoBloc, TodoState>(
         builder: (context, state) {
           if (state.status == TodoStatus.loading) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state.todos.isEmpty) {
+          }
+
+          final todos = state.filteredTodos;
+
+          if (todos.isEmpty) {
             return const Center(child: Text('No todos available'));
           } else {
             return ListView.builder(
-              itemCount: state.todos.length,
+              itemCount: todos.length,
               itemBuilder: (context, index) {
-                final todo = state.todos[index];
+                final todo = todos[index];
                 return TodoItem(todo: todo);
               },
             );

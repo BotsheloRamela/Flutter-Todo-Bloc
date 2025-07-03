@@ -23,6 +23,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     on<TodoUpdated>(_onTodoUpdated);
     on<TodoDeleted>(_onTodoDeleted);
     on<TodoCompletionToggled>(_onTodoToggled);
+    on<TodoFilterChanged>(_onFilterChanged);
   }
 
   final CreateTodo createTodo;
@@ -70,6 +71,11 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       }
       return getAllTodos();
     });
+  }
+
+  void _onFilterChanged(TodoFilterChanged event, Emitter<TodoState> emit) {
+    logger.d('TodoBloc: _onFilterChanged called with filter: ${event.filter}');
+    emit(state.copyWith(filter: event.filter));
   }
 
   Future<void> _performActionWithReload(
