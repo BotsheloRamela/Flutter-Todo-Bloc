@@ -2,6 +2,11 @@ import 'package:flutter_todo_bloc/data/database/app_database.dart';
 import 'package:flutter_todo_bloc/data/datasources/todo_local_datasource.dart';
 import 'package:flutter_todo_bloc/data/repositories/todo_repository_impl.dart';
 import 'package:flutter_todo_bloc/domain/repositories/todo_repository.dart';
+import 'package:flutter_todo_bloc/domain/usecases/create_todo.dart';
+import 'package:flutter_todo_bloc/domain/usecases/delete_todo.dart';
+import 'package:flutter_todo_bloc/domain/usecases/get_all_todos.dart';
+import 'package:flutter_todo_bloc/domain/usecases/get_todo_by_id.dart';
+import 'package:flutter_todo_bloc/domain/usecases/update_todo.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -27,6 +32,20 @@ Future<List<SingleChildWidget>> setupDependencies() async {
       create: (context) => Provider.of<TodoRepositoryImpl>(context, listen: false),
     ),
 
-    // TODO: Maybe add providers for use cases, view models, etc. -> Bloc
+    Provider<CreateTodo>(
+      create: (context) => CreateTodo(Provider.of<TodoRepository>(context, listen: false)),
+    ),
+    Provider<GetAllTodos>(
+      create: (context) => GetAllTodos(Provider.of<TodoRepository>(context, listen: false)),
+    ),
+    Provider<UpdateTodo>(
+      create: (context) => UpdateTodo(Provider.of<TodoRepository>(context, listen: false)),
+    ),
+    Provider<DeleteTodo>(
+      create: (context) => DeleteTodo(Provider.of<TodoRepository>(context, listen: false)),
+    ),
+    Provider<GetTodoById>(
+      create: (context) => GetTodoById(Provider.of<TodoRepository>(context, listen: false)),
+    ),
   ];
 }
