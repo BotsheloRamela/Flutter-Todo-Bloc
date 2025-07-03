@@ -3,19 +3,19 @@ import 'package:equatable/equatable.dart';
 class Todo extends Equatable {
 
   const Todo({
-    required this.id,
     required this.title,
     required this.createdAt,
+    this.id,
     this.isCompleted = false,
   });
 
-  final String id;
+  final int? id;
   final String title;
   final bool isCompleted;
   final String createdAt;
 
   Todo copyWith({
-    String? id,
+    int? id,
     String? title,
     bool? isCompleted,
     String? createdAt,

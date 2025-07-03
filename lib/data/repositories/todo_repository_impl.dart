@@ -16,8 +16,8 @@ class TodoRepositoryImpl implements TodoRepository {
   }
 
   @override
-  Future<Todo?> getTodoById(String id) async {
-    final entity = await _localDataSource.getTodoById(int.tryParse(id) ?? -1);
+  Future<Todo?> getTodoById(int id) async {
+    final entity = await _localDataSource.getTodoById(id);
     return entity != null ? _toDomain(entity) : null;
   }
 
@@ -32,11 +32,8 @@ class TodoRepositoryImpl implements TodoRepository {
   }
 
   @override
-  Future<void> deleteTodo(String id) async {
-    final parsedId = int.tryParse(id);
-    if (parsedId == null) throw ArgumentError('Invalid ID: $id');
-
-    final entity = await _localDataSource.getTodoById(parsedId);
+  Future<void> deleteTodo(int id) async {
+    final entity = await _localDataSource.getTodoById(id);
     if (entity != null) {
       await _localDataSource.deleteTodo(entity);
     }
@@ -44,7 +41,7 @@ class TodoRepositoryImpl implements TodoRepository {
 
   // Helper: Map data entity to domain entity
   Todo _toDomain(TodoEntity entity) => Todo(
-      id: entity.id?.toString() ?? '',
+      id: entity.id,
       title: entity.title,
       isCompleted: entity.isDone,
       createdAt: entity.createdAt,
@@ -52,7 +49,7 @@ class TodoRepositoryImpl implements TodoRepository {
 
   // Helper: Map domain entity to data model
   TodoModel _toModel(Todo todo) => TodoModel(
-      id: int.tryParse(todo.id),
+      id: todo.id,
       title: todo.title,
       isDone: todo.isCompleted,
       createdAt: todo.createdAt,

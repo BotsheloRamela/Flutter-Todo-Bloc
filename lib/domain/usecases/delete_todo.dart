@@ -4,7 +4,7 @@ class DeleteTodo {
   DeleteTodo(this.repository);
   final TodoRepository repository;
 
-  Future<void> call(String id) async {
+  Future<void> call(int id) async {
     await repository.deleteTodo(id);
   }
 }

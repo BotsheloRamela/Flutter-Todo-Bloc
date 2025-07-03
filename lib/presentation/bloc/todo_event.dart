@@ -1,6 +1,7 @@
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_todo_bloc/domain/entities/todo.dart';
+import 'package:flutter_todo_bloc/presentation/bloc/todo_state.dart';
 
 abstract class TodoEvent extends Equatable{
   const TodoEvent();
@@ -34,7 +35,7 @@ class TodoUpdated extends TodoEvent {
 class TodoDeleted extends TodoEvent {
   const TodoDeleted(this.todoId);
 
-  final String todoId;
+  final int todoId;
 
   @override
   List<Object?> get props => [todoId];
@@ -43,8 +44,17 @@ class TodoDeleted extends TodoEvent {
 class TodoCompletionToggled extends TodoEvent {
   const TodoCompletionToggled(this.todoId);
 
-  final String todoId;
+  final int todoId;
 
   @override
   List<Object?> get props => [todoId];
+}
+
+class TodoFilterChanged extends TodoEvent {
+  const TodoFilterChanged(this.filter);
+
+  final TodoFilter filter;
+
+  @override
+  List<Object> get props => [filter];
 }
