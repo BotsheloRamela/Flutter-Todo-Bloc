@@ -30,11 +30,11 @@ The project includes helpful scripts for development:
 
 ### Generate Floor database files:
 ```bash
-bash./scripts/run_build_runner.sh
+bash ./scripts/run_build_runner.sh
 ```
 ### Clean up code:
 ```bash
-./scripts/clean_code.sh
+bash ./scripts/clean_code.sh
 ```
 Automatically fixes imports, formats code, and runs analysis.
 
@@ -70,6 +70,9 @@ was interesting:
 * BLoC vs Riverpod: BLoC is more explicit with events and states, while Riverpod feels more direct
 * Floor vs Hive: Floor gives you proper SQL queries but requires more setup than Hive's simple key-value approach
 * Clean Architecture: Still works great regardless of the state management solution
+
+_Note: While all code was written independently, GitHub Copilot was used for PR review suggestions 
+during development._
 
 ## Testing
 Run tests with:
