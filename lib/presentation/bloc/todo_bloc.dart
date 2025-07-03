@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_todo_bloc/domain/entities/todo.dart';
 import 'package:flutter_todo_bloc/domain/usecases/create_todo.dart';
 import 'package:flutter_todo_bloc/domain/usecases/delete_todo.dart';
 import 'package:flutter_todo_bloc/domain/usecases/get_all_todos.dart';
@@ -30,61 +31,52 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   final GetTodoById getTodoById;
 
   void _onStarted(TodoStarted event, Emitter<TodoState> emit) async {
-    emit(state.copyWith(status: TodoStatus.loading));
-    try {
-      final todos = await getAllTodos();
-      emit(state.copyWith(todos: todos, status: TodoStatus.success));
-    } catch (e) {
-      emit(state.copyWith(status: TodoStatus.error));
-    }
+    await _performActionWithReload(emit, () async => getAllTodos());
   }
 
   void _onTodoAdded(TodoAdded event, Emitter<TodoState> emit) async {
-    emit(state.copyWith(status: TodoStatus.loading));
-    try {
+    await _performActionWithReload(emit, () async {
       await createTodo(event.todo);
-      final todos = await getAllTodos();
-      emit(state.copyWith(todos: todos, status: TodoStatus.success));
-    } catch (e) {
-      emit(state.copyWith(status: TodoStatus.error));
-    }
+      return getAllTodos();
+    });
   }
 
   void _onTodoUpdated(TodoUpdated event, Emitter<TodoState> emit) async {
-    emit(state.copyWith(status: TodoStatus.loading));
-    try {
+    await _performActionWithReload(emit, () async {
       await updateTodo(event.todo);
-      final todos = await getAllTodos();
-      emit(state.copyWith(todos: todos, status: TodoStatus.success));
-    } catch (e) {
-      emit(state.copyWith(status: TodoStatus.error));
-    }
+      return getAllTodos();
+    });
   }
 
   void _onTodoDeleted(TodoDeleted event, Emitter<TodoState> emit) async {
-    emit(state.copyWith(status: TodoStatus.loading));
-    try {
+    await _performActionWithReload(emit, () async {
       await deleteTodo(event.todoId);
-      final todos = await getAllTodos();
-      emit(state.copyWith(todos: todos, status: TodoStatus.success));
-    } catch (e) {
-      emit(state.copyWith(status: TodoStatus.error));
-    }
+      return getAllTodos();
+    });
   }
 
   void _onTodoToggled(TodoCompletionToggled event, Emitter<TodoState> emit) async {
-    emit(state.copyWith(status: TodoStatus.loading));
-    try {
+    await _performActionWithReload(emit, () async {
       final todo = await getTodoById(event.todoId);
       if (todo != null) {
         await updateTodo(todo.copyWith(isCompleted: !todo.isCompleted));
-        final todos = await getAllTodos();
-        emit(state.copyWith(todos: todos, status: TodoStatus.success));
       } else {
-        emit(state.copyWith(status: TodoStatus.error, errorMessage: 'Todo not found'));
+        throw Exception('Todo not found');
       }
+      return getAllTodos();
+    });
+  }
+
+  Future<void> _performActionWithReload(
+    Emitter<TodoState> emit,
+    Future<List<Todo>> Function() action
+  ) async {
+    emit(state.copyWith(status: TodoStatus.loading));
+    try {
+      final todos = await action();
+      emit(state.copyWith(todos: todos, status: TodoStatus.success));
     } catch (e) {
-      emit(state.copyWith(status: TodoStatus.error));
+      emit(state.copyWith(status: TodoStatus.error, errorMessage: e.toString()));
     }
   }
 }
