@@ -1,4 +1,5 @@
 
+import 'package:equatable/equatable.dart';
 import 'package:flutter_todo_bloc/domain/entities/todo.dart';
 
 enum TodoStatus {
@@ -10,7 +11,7 @@ enum TodoStatus {
 
 enum TodoFilter { all, active, completed }
 
-class TodoState {
+class TodoState extends Equatable{
 
   TodoState({
     this.todos = const <Todo>[],
@@ -46,4 +47,7 @@ class TodoState {
       filter: filter ?? this.filter,
       errorMessage: errorMessage ?? this.errorMessage,
     );
+
+  @override
+  List<Object?> get props => [todos, status, filter, errorMessage];
 }
